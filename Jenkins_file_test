@@ -17,7 +17,7 @@ pipeline {
 
                         sh """
                         cd 
-                        cd /home/jenkins/workspace
+                        pwd
                         if [ -d $DIR_NAME ]; then
                             rm -rf $DIR_NAME
                         fi
@@ -45,7 +45,6 @@ pipeline {
                         script {
                             sh """
                             cd
-                            cd /home/jenkins/workspace
                             rm -f first_pipe_cd_status.txt
                             echo 'failed' > first_pipe_cd_status.txt
                             """
