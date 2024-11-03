@@ -46,17 +46,11 @@ pipeline {
                             sh """
                             cd
                             cd /home/jenkins/workspace
-                            rm -f rdma_microchip_delivery_cd_status.txt
-                            echo 'failed' > rdma_microchip_delivery_cd_status.txt
+                            rm -f first_pipe_cd_status.txt
+                            echo 'failed' > first_pipe_cd_status.txt
                             """
 
-                            data.failed_stages = "clone_and_checkout"
-                            data.color = "danger"
-                            def slackMessage = buildSlackMessage.call(data)
 
-
-                            sh "curl -X POST -H 'Content-type: application/json' --data '${slackMessage}' ${NAZARS_WEBHOOK}"
-                            sh "curl -X POST -H 'Content-type: application/json' --data '${slackMessage}' ${STOP_RDMA_MICROCHIP_CD_PIPELINE}"
                         }
                     }
                 }
