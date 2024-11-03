@@ -1,5 +1,5 @@
 def DEFAULT_RUNNER = 'server-28'
-def DIR_NAME = 'first_pipe'
+def DIR_NAME = 'first_pipe_folder'
 
 
 pipeline {
@@ -24,17 +24,15 @@ pipeline {
                         if [ ! -d $DIR_NAME ]; then
                             mkdir $DIR_NAME
                             cd $DIR_NAME
-                            git clone git@gitlab.grovf.com:rdma/microchip_delivery.git
+                            git clone https://github.com/david050602/first_pipe.git
                         else
                             echo 'Pulling remote repo origin...'
                             cd $DIR_NAME
                         fi
 
-
+                        cd first_pipe
                         pwd
-
                         git log --oneline -n1
-
                         git submodule update --init
 
                         """
