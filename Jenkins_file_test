@@ -1,0 +1,69 @@
+def DEFAULT_RUNNER = 'server-28'
+def DIR_NAME = 'first_pipe'
+
+
+pipeline {
+
+        agent any
+        
+        stages {
+
+
+
+            stage('clone_and_checkout') {
+
+                steps {
+                    script {
+
+                        sh """
+                        cd 
+                        cd /home/jenkins/workspace
+                        if [ -d $DIR_NAME ]; then
+                            rm -rf $DIR_NAME
+                        fi
+                        if [ ! -d $DIR_NAME ]; then
+                            mkdir $DIR_NAME
+                            cd $DIR_NAME
+                            git clone git@gitlab.grovf.com:rdma/microchip_delivery.git
+                        else
+                            echo 'Pulling remote repo origin...'
+                            cd $DIR_NAME
+                        fi
+
+
+                        pwd
+
+                        git log --oneline -n1
+
+                        git submodule update --init
+
+                        """
+
+                    }
+                }
+
+                post {
+                    failure {
+                        script {
+                            sh """
+                            cd
+                            cd /home/jenkins/workspace
+                            rm -f rdma_microchip_delivery_cd_status.txt
+                            echo 'failed' > rdma_microchip_delivery_cd_status.txt
+                            """
+
+                            data.failed_stages = "clone_and_checkout"
+                            data.color = "danger"
+                            def slackMessage = buildSlackMessage.call(data)
+
+
+                            sh "curl -X POST -H 'Content-type: application/json' --data '${slackMessage}' ${NAZARS_WEBHOOK}"
+                            sh "curl -X POST -H 'Content-type: application/json' --data '${slackMessage}' ${STOP_RDMA_MICROCHIP_CD_PIPELINE}"
+                        }
+                    }
+                }
+            }
+
+
+    }
+}
